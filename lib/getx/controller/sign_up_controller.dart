@@ -10,12 +10,24 @@ class SignUpController extends GetxController {
   final password = TextEditingController();
   final phoneNumber = TextEditingController();
 
-  // SignUp Method (register)
+  // Phone Sign In. take phone number from UI
+  phoneSignIn(String phoneNumber) {
+    AuthenticationRepository.instance.phoneAuthentication(phoneNumber);
+  }
+
+  // SignUp Method (register). take email and password from UI
   registerUser(String email, String password) {
     AuthenticationRepository.instance
         .createUserWithEmailAndPassword(email, password);
   }
 
+  // Log In. take email and password from UI
+  logUserIn(String email, String password) {
+    AuthenticationRepository.instance
+        .logInUserWithEmailAndPassword(email, password);
+  }
+
+  // Log Out
   logOut() {
     AuthenticationRepository.instance.logOut();
   }

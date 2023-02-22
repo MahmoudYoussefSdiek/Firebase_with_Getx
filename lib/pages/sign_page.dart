@@ -1,4 +1,5 @@
 import 'package:firebase_authentication/getx/controller/sign_up_controller.dart';
+import 'package:firebase_authentication/pages/phone_sign_in_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -52,6 +53,30 @@ class SignPage extends StatelessWidget {
                     }
                   },
                   child: const Text('Sign In'),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (formKey.currentState!.validate()) {
+                      controller.logUserIn(controller.email.text.trim(),
+                          controller.password.text.trim());
+                      // SignUpController.instance.registerUser(
+                      //     controller.email.text.trim(),
+                      //     controller.password.text.trim());
+                    }
+                  },
+                  child: const Text('Log In'),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                TextButton(
+                  onPressed: () {
+                    Get.offAll(() => const PhoneSignInPage());
+                  },
+                  child: const Text('Phone Sign In'),
                 ),
               ],
             ),

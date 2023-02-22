@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_authentication/firebase/exceptions/signup_email_password_failure.dart';
-import 'package:firebase_authentication/home_page.dart';
-import 'package:firebase_authentication/sign_page.dart';
+import 'package:firebase_authentication/pages/home_page.dart';
+import 'package:firebase_authentication/pages/sign_page.dart';
 import 'package:get/get.dart';
 
 // here we will register to firebase using GetX as StateManagement
@@ -12,6 +12,7 @@ class AuthenticationRepository extends GetxController {
   // Variables
   final _auth = FirebaseAuth.instance;
   late final Rx<User?> firebaseUser;
+  var verificationId = ''.obs;
 
   // here we use this call in start of app to initialize variables
   @override
@@ -35,7 +36,37 @@ class AuthenticationRepository extends GetxController {
         : Get.offAll(() => const HomePage());
   }
 
-  // here we will register user to firebase
+  // here user will sign in with phone number
+  Future<void> phoneAuthentication(String phoneNumber) async {
+    await _auth.verifyPhoneNumber(
+      phoneNumber: phoneNumber,
+      verificationCompleted: (credential) async {
+        await _auth.signInWithCredential(credential);
+      },
+      codeSent: (verificationId, resendToken) {
+        this.verificationId.value = verificationId;
+      },
+      codeAutoRetrievalTimeout: (verificationId) {
+        this.verificationId.value = verificationId;
+      },
+      verificationFailed: (e) {
+        if (e.code == 'invalid-phone-number') {
+          Get.snackbar('Error', 'Phone Number is not valid');
+        } else {
+          Get.snackbar('Error', 'Something Wrong Happen');
+        }
+      },
+    );
+  }
+
+  Future<bool> verifyOTP(String otp) async {
+    var credential = await _auth.signInWithCredential(
+        PhoneAuthProvider.credential(
+            verificationId: verificationId.value, smsCode: otp));
+    return credential.user != null ? true : false;
+  }
+
+  // here we will register user to firebase with email and password
   Future<void> createUserWithEmailAndPassword(
       String email, String password) async {
     try {
@@ -55,7 +86,7 @@ class AuthenticationRepository extends GetxController {
     }
   }
 
-  // here to make user log in
+  // here to make user log in with email and password
   Future<void> logInUserWithEmailAndPassword(
       String email, String password) async {
     try {
