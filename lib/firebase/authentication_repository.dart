@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_authentication/firebase/exceptions/signup_email_password_failure.dart';
 import 'package:firebase_authentication/pages/home_page.dart';
-import 'package:firebase_authentication/pages/sign_page.dart';
+import 'package:firebase_authentication/pages/register_page.dart';
 import 'package:get/get.dart';
 
 // here we will register to firebase using GetX as StateManagement
@@ -32,7 +32,7 @@ class AuthenticationRepository extends GetxController {
     // here we check user if exists or no
     // Get.offAll() to clear all pages and return a new page
     user == null
-        ? Get.offAll(() => const SignPage())
+        ? Get.offAll(() => const RegisterPage())
         : Get.offAll(() => const HomePage());
   }
 
@@ -74,7 +74,7 @@ class AuthenticationRepository extends GetxController {
           email: email, password: password);
       // firebaseUser.value != null
       //     ? Get.offAll(() => const HomePage())
-      //     : Get.offAll(() => const SignPage());
+      //     : Get.offAll(() => const RegisterPage());
     } on FirebaseAuthException catch (e) {
       final exception = SignUpWithEmailAndPasswordFailure.code(e.code);
       print('Firebase auth exception : ${exception.message} ');
