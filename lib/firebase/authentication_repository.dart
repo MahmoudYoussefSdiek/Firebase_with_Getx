@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_authentication/firebase/exceptions/signup_email_password_failure.dart';
+import 'package:firebase_authentication/pages/choose_sign_up_method_page.dart';
 import 'package:firebase_authentication/pages/home_page.dart';
-import 'package:firebase_authentication/pages/register_page.dart';
+import 'package:firebase_authentication/pages/otp_page.dart';
 import 'package:get/get.dart';
 
 // here we will register to firebase using GetX as StateManagement
@@ -32,7 +33,7 @@ class AuthenticationRepository extends GetxController {
     // here we check user if exists or no
     // Get.offAll() to clear all pages and return a new page
     user == null
-        ? Get.offAll(() => const RegisterPage())
+        ? Get.offAll(() => const ChooseSignUpMethodPage())
         : Get.offAll(() => const HomePage());
   }
 
@@ -40,11 +41,15 @@ class AuthenticationRepository extends GetxController {
   Future<void> phoneAuthentication(String phoneNumber) async {
     await _auth.verifyPhoneNumber(
       phoneNumber: phoneNumber,
+      timeout: const Duration(seconds: 120),
       verificationCompleted: (credential) async {
-        await _auth.signInWithCredential(credential);
+        await _auth
+            .signInWithCredential(credential)
+            .then((value) => Get.offAll(const HomePage()));
       },
       codeSent: (verificationId, resendToken) {
         this.verificationId.value = verificationId;
+        Get.to(const OTPPage());
       },
       codeAutoRetrievalTimeout: (verificationId) {
         this.verificationId.value = verificationId;
@@ -59,11 +64,14 @@ class AuthenticationRepository extends GetxController {
     );
   }
 
-  Future<bool> verifyOTP(String otp) async {
-    var credential = await _auth.signInWithCredential(
-        PhoneAuthProvider.credential(
-            verificationId: verificationId.value, smsCode: otp));
-    return credential.user != null ? true : false;
+  Future verifyOTP(String otp) async {
+    var credential = PhoneAuthProvider.credential(
+      verificationId: verificationId.value,
+      smsCode: otp,
+    );
+    await _auth
+        .signInWithCredential(credential)
+        .then((value) => Get.offAll(const HomePage()));
   }
 
   // here we will register user to firebase with email and password
@@ -77,11 +85,11 @@ class AuthenticationRepository extends GetxController {
       //     : Get.offAll(() => const RegisterPage());
     } on FirebaseAuthException catch (e) {
       final exception = SignUpWithEmailAndPasswordFailure.code(e.code);
-      print('Firebase auth exception : ${exception.message} ');
+      // print('Firebase auth exception : ${exception.message} ');
       throw exception;
     } catch (_) {
       const exception = SignUpWithEmailAndPasswordFailure();
-      print('Firebase auth exception : ${exception.message} ');
+      // print('Firebase auth exception : ${exception.message} ');
       throw exception;
     }
   }

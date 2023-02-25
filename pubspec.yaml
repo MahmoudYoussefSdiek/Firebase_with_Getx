@@ -38,6 +38,7 @@ dependencies:
   firebase_core:
   firebase_auth:
   get:
+  flutter_otp_text_field:
 
 dev_dependencies:
   flutter_test:

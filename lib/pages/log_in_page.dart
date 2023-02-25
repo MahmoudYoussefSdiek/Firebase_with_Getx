@@ -1,5 +1,4 @@
 import 'package:firebase_authentication/getx/controller/sign_up_controller.dart';
-import 'package:firebase_authentication/pages/phone_sign_in_page.dart';
 import 'package:firebase_authentication/pages/register_page.dart';
 import 'package:firebase_authentication/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +33,7 @@ class LogInPage extends StatelessWidget {
                     hintText: 'Enter Your Email',
                     isPassword: false,
                     textInputType: TextInputType.emailAddress,
+                    icon: const Icon(Icons.email_outlined),
                   ),
                   const SizedBox(
                     height: 30,
@@ -43,33 +43,37 @@ class LogInPage extends StatelessWidget {
                     hintText: 'Enter your Password',
                     textInputType: TextInputType.text,
                     isPassword: true,
+                    icon: const Icon(Icons.password_outlined),
                   ),
                   const SizedBox(
                     height: 30,
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (formKey.currentState!.validate()) {
-                        controller.logUserIn(controller.email.text.trim(),
-                            controller.password.text.trim());
-                        // SignUpController.instance.logUserIn(
-                        //     controller.email.text.trim(),
-                        //     controller.password.text.trim());
-                      }
-                    },
-                    style: ButtonStyle(
-                      padding: MaterialStateProperty.all(
-                        const EdgeInsets.all(12),
-                      ),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (formKey.currentState!.validate()) {
+                          controller.logUserIn(controller.email.text.trim(),
+                              controller.password.text.trim());
+                          // SignUpController.instance.logUserIn(
+                          //     controller.email.text.trim(),
+                          //     controller.password.text.trim());
+                        }
+                      },
+                      style: ButtonStyle(
+                        padding: MaterialStateProperty.all(
+                          const EdgeInsets.all(12),
+                        ),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
                       ),
-                    ),
-                    child: const Text(
-                      'Log In',
-                      style: TextStyle(fontSize: 19),
+                      child: const Text(
+                        'Log In',
+                        style: TextStyle(fontSize: 19),
+                      ),
                     ),
                   ),
                   const SizedBox(
